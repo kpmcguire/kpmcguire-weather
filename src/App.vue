@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    h1 Weather
+    h1(v-if="isLoading") Weather
     button(@click="getUserLocation") Get My location
     p or
 
@@ -11,7 +11,7 @@
 
     button(@click="getLocationFromPresets(40.730610, -73.935242)") New York
     button(@click="getLocationFromPresets(41.881832, -87.623177)") Chicago
-
+    
     div
       input(type="radio" id="isFahrenheitTrue" value="True" v-model="isFahrenheit")
       label(for="isFahrenheitTrue") ℉
@@ -34,18 +34,36 @@
     div {{units}}
     div {{wacky}} {{units}}
 
-    div {{weatherData}}
+    .spinner(v-if="isLoading")
+    div(v-else)
+      ul(v-for="hour in hourlyData") 
+        li {{hour.time}} 
+        li {{hour.temp}} 
+        li.icon 
+          Icon(v-bind:iconTitle="hour.icon")
+
+    ul(v-for="day in dailyData") 
+      li {{day.time}} 
+      li {{day.tempLow}} 
+      li {{day.tempHigh}}  
+      li.icon 
+        Icon(v-bind:iconTitle="day.icon")
 
 
 </template>
 
 <script>
-
+import Icon from './components/Icon'
 export default {
   name: 'app',
+  components: {
+    Icon
+  },
   data: function() {
     return {
       weatherData: '',
+      hourlyData: [],
+      dailyData: [],
       searchQuery: '',
       currentLat:'',
       currentLong:'',
@@ -53,20 +71,49 @@ export default {
       isFahrenheit: 'True',
       isImperial: 'True',
       units: 'us',
-      wacky: false
-
-      
+      wacky: false,
+      // isLoading: false,
+      isLoadingWeather: false,
+      isLoadingGeocoding: false,
+      isLoadingReverseGeocoding: false
     }
   },
   methods: {
     showData() {
+      
       fetch(`http://localhost:5000/darksky?lat=${this.currentLat}&long=${this.currentLong}&units=${this.units}`)
       .then(response => {
+        this.isLoadingWeather = true
         return response.json();
       })
       .then(data => {
-        // Work with JSON data here
-        this.weatherData = data
+        this.hourlyData = []
+        this.dailyData = []
+        
+        let rawHourlyData = Object.values(data.hourly.data)
+        rawHourlyData.slice(0,6).forEach((hour)=>{
+          let hourObj = {}
+          
+          hourObj.time = this.convertTime(hour.time)
+          hourObj.temp = hour.temperature
+          hourObj.icon = hour.icon
+
+          this.hourlyData.push(hourObj)
+        })
+
+        let rawDailyData = Object.values(data.daily.data)
+        rawDailyData.slice(0,7).forEach((day)=>{
+          let dayObj = {}
+          
+          dayObj.time = this.convertTime(day.time)
+          dayObj.tempLow = day.temperatureLow
+          dayObj.tempHigh = day.temperatureHigh
+          dayObj.icon = day.icon
+          
+          this.dailyData.push(dayObj)
+        })
+        this.isLoadingWeather = false
+
       })
       .catch(err => {
         this.weatherData = err
@@ -79,6 +126,7 @@ export default {
     geocode(query) {
       fetch(`http://localhost:5000/geocode?search_query=${query}`)
       .then(response => {
+        this.isLoadingGeocoding = true
         return response.json();
       })
       .then(data => {
@@ -86,6 +134,8 @@ export default {
         this.currentLong = data.results[0].geometry.location.lng
 
         this.reverseGeocode(this.currentLat, this.currentLong)
+        this.isLoadingGeocoding = false
+
       })
       .catch(err => {
         this.weatherData = err
@@ -95,6 +145,8 @@ export default {
 
       fetch(`http://localhost:5000/reverse_geocode?lat=${lat}&long=${long}`)
       .then(response=>{
+        this.isLoadingReverseGeocoding = true
+
         return response.json()
         
       })
@@ -128,6 +180,8 @@ export default {
         state = stateResult[0].name
         country = countryResult[0].name
         this.currentLocationFriendly = `${city} ${state} ${country}`
+        this.isLoadingReverseGeocoding = false
+
       })
 
     },
@@ -157,9 +211,36 @@ export default {
         this.wacky = true
         return 'us'
       }
+    },
+    convertTime(time) {
+      let date = new Date(time*1000)
+      let day = date.getDay()
+      let weekdays_array = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+      let hours 
+
+      if (date.getHours() > 12) {
+        hours = date.getHours() - 12
+      } else if(date.getHours() === 0) {
+        hours = 12
+      } else {
+        hours = date.getHours()
+      }
+
+      let am_pm = date.getHours() >= 12 ? 'PM' : 'AM'
+
+      return `${weekdays_array[day]} ${hours} ${am_pm}`
     }
   },
-
+  computed: {
+    isLoading() {
+       if (this.isLoadingGeocoding || this.isLoadingWeather || this.isLoadingReverseGeocoding) {
+         return true
+       } else {
+         return false
+       }
+    }
+  },
   watch: {
     currentLat() {
       this.showData()
