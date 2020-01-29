@@ -5,11 +5,21 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "start": "node server.js",
+    "server": "pm2 start server.js --watch --name server",
+    "dev": "npm run server | npm run serve"
   },
   "dependencies": {
     "core-js": "^3.4.4",
-    "vue": "^2.6.10"
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "node-sass": "^4.13.1",
+    "request": "^2.88.0",
+    "sass": "^1.25.0",
+    "sass-loader": "^8.0.2",
+    "vue": "^2.6.10",
+    "vue-cli-plugin-pug": "^1.0.7"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.1.0",
@@ -29,7 +39,10 @@
       "plugin:vue/essential",
       "eslint:recommended"
     ],
-    "rules": {},
+    "rules": {
+      "no-console": 1,
+      "no-debugger": 1
+    },
     "parserOptions": {
       "parser": "babel-eslint"
     }

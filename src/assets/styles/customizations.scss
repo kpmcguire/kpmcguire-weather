@@ -1,0 +1,15 @@
+@import 'includes/mixins';
+@import 'includes/typography';
+
+body {
+  font-family: "open_sanslight";
+  color: gray;
+
+  h1 {
+    font-family: "open_sanslight_italic"
+  }
+
+  @include for-small {
+    color: red;
+  }
+}
