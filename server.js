@@ -48,7 +48,7 @@ app.use("/reverse_geocode/", (req, res) => {
   req.pipe(request(url)).pipe(res)
 })
 
-// var port = process.env.PORT || 5000
-var port = 3001
+var port = process.env.PORT || 5000
+// var port = 3001
 app.listen(port) 
 console.log('server started ' + port)

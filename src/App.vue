@@ -48,7 +48,7 @@
             label(for="isImperialTrue") Imp.
             input(type="radio" id="isImperialFalse" value="False" v-model="isImperial")
             label(for="isImperialFalse") Met.        
-            
+
       .forecast-area.bg-transparent-black.p-6
         div(v-if="!isLoading")
           div(v-if="Object.keys(hourlyData).length")
@@ -65,8 +65,8 @@
 
 <script>
 
-let apiUrl = 'http://localhost:3001'
-// let apiUrl = ''
+// let apiUrl = 'http://localhost:3001'
+let apiUrl = ''
 
 import Activities from './components/Activities'
 import Hourly from './components/Hourly'
