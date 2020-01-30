@@ -2,10 +2,15 @@
 @import 'includes/typography';
 @import 'includes/spinner';
 
+$blue: #4AC8EE;
+
+$button-color: $blue;
+
 body {
-  font-family: "open_sanslight";
+  font-family: "Open Sans";
   color: gray;
   background: silver;
+
   h1 {
     font-family: "open_sanslight_italic"
   }
@@ -15,9 +20,41 @@ body {
   }
 }
 
+.icon {
+  width: 50px;
 
-li.icon {
   img {
+    display: block;
     filter: invert(1)
+  }
+}
+
+.background {
+  background: url('assets/images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.title-bar, .bg-transparent-black {
+  background-color: rgba(black, 0.5)
+}
+
+.edt-logo {
+  max-width: 265px;
+}
+
+.button {
+  background-color: darken($button-color, 30);
+  border-radius: 0.25em;
+  padding: 0.5em 0.75em;
+  font-weight: bold;
+
+  &:hover, &:focus {
+    background-color: darken($button-color, 40);
+  }
+
+  &:active {
+    background-color: darken($button-color, 50);
   }
 }
