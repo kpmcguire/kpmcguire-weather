@@ -124,7 +124,7 @@ export default {
 
       this.currentDate = `${month}.${day}.${year}`
 
-      fetch(`http://localhost:5000/darksky?lat=${this.currentLat}&long=${this.currentLong}`)
+      fetch(`/darksky?lat=${this.currentLat}&long=${this.currentLong}`)
       .then(response => {
         
         return response.json();
@@ -182,7 +182,7 @@ export default {
     geocode(query) {
       this.isLoadingGeocoding = true
 
-      fetch(`http://localhost:5000/geocode?search_query=${query}`)
+      fetch(`/geocode?search_query=${query}`)
       .then(response => {
         return response.json()
       })
@@ -212,7 +212,7 @@ export default {
       this.activitiesData = [] 
       this.isLoadingReverseGeocoding = true
 
-      fetch(`http://localhost:5000/reverse_geocode?lat=${lat}&long=${long}`)
+      fetch(`/reverse_geocode?lat=${lat}&long=${long}`)
       .then(response=>{
         return response.json();
       })
