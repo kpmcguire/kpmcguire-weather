@@ -1,11 +1,11 @@
 <template lang="pug">
   #app
     .background.text-white
-      .title-bar.text-xl.pt-2.pb-2.pr-4.flex.items-center.content-between
+      .title-bar.pt-2.pb-2.pr-4.flex.items-center.content-between(class="md:text-xl")
         .flex-1
           img.edt-logo(src="@/assets/images/edt-logo.png")
-        .currentTime.flex-1.text-center {{currentTime}}
-        .currentDate.flex-1.text-right {{currentDate}}
+        .flex-1.text-right(class="md:text-center") {{currentTime}}
+        .flex-1.text-right {{currentDate}}
       .content-area(class="md:flex-row md:flex md:items-stretch")
         .location.p-4
           ul.list-buttons 
@@ -21,10 +21,12 @@
               button.button(@click="getLocationFromPresets(22.302711, 114.177216)") Hong Kong
             li 
               button.button(@click="getLocationFromPresets(-34.603722, -58.381592)") Buenos Aires                    
-            li 
+            li(class="text-center w-full md:w-auto md:text-left")
               form(@submit="search" v-on:submit.prevent)
-                input(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="query" type="text" v-model="searchQuery")
-                button.button(type="submit") Search          
+                label.block(class="md:mt-4 mb-1" for="query") Search (address or postal code)
+                .flex
+                  input(class="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="query" type="text" v-model="searchQuery")
+                  button.button-search(type="submit") Search          
 
         .current.text-center.p-4
           .spinner.mx-auto.my-4(v-if="isLoading")
@@ -46,6 +48,7 @@
             label(for="isImperialTrue") Imp.
             input(type="radio" id="isImperialFalse" value="False" v-model="isImperial")
             label(for="isImperialFalse") Met.        
+            
       .forecast-area.bg-transparent-black.p-6
         div(v-if="!isLoading")
           div(v-if="Object.keys(hourlyData).length")
@@ -61,6 +64,10 @@
 </template>
 
 <script>
+
+let apiUrl = 'http://localhost:3001'
+// let apiUrl = ''
+
 import Activities from './components/Activities'
 import Hourly from './components/Hourly'
 import Daily from './components/Daily'
@@ -124,7 +131,7 @@ export default {
 
       this.currentDate = `${month}.${day}.${year}`
 
-      fetch(`/darksky?lat=${this.currentLat}&long=${this.currentLong}`)
+      fetch(`${apiUrl}/darksky?lat=${this.currentLat}&long=${this.currentLong}`)
       .then(response => {
         
         return response.json();
@@ -182,7 +189,7 @@ export default {
     geocode(query) {
       this.isLoadingGeocoding = true
 
-      fetch(`/geocode?search_query=${query}`)
+      fetch(`${apiUrl}/geocode?search_query=${query}`)
       .then(response => {
         return response.json()
       })
@@ -212,7 +219,7 @@ export default {
       this.activitiesData = [] 
       this.isLoadingReverseGeocoding = true
 
-      fetch(`/reverse_geocode?lat=${lat}&long=${long}`)
+      fetch(`${apiUrl}/reverse_geocode?lat=${lat}&long=${long}`)
       .then(response=>{
         return response.json();
       })

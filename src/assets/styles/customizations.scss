@@ -2,10 +2,6 @@
 @import 'includes/typography';
 @import 'includes/spinner';
 
-$blue: #4AC8EE;
-
-$button-color: $blue;
-
 body {
   font-family: "Open Sans";
   color: gray;
@@ -44,20 +40,36 @@ body {
 
 .edt-logo {
   max-width: 265px;
+
+  @include for-small {
+    max-width: 175px;
+  }
 }
 
 .button {
-  background-color: darken($button-color, 30);
-  border-radius: 0.25em;
-  padding: 0.5em 0.75em;
+  // padding: 0.5em 0.75em;
   font-weight: bold;
 
   &:hover, &:focus {
-    background-color: darken($button-color, 40);
+    text-decoration: underline
   }
 
   &:active {
-    background-color: darken($button-color, 50);
+    text-decoration: none
+  }
+}
+
+.button-search {
+  background-color: rgba(black, 0.4);
+  padding: 0.5em 0.75em;
+  border-top-right-radius: 0.25em;
+  border-bottom-right-radius: 0.25em;
+  &:hover, &:focus {
+    background-color: rgba(black, 0.6);
+  }
+
+  &:active {
+    background-color: rgba(black, 0.8);
   }
 }
 
@@ -102,7 +114,7 @@ body {
       font-weight: bold;
 
       @include for-medium {
-        font-size: 15vw;
+        font-size: 13vw;
       }
     }
 
@@ -115,7 +127,12 @@ body {
     }
 
     .icon img {
-      width: 75px;
+      width: 10vw;
+
+      @include for-medium {
+        width: 16vw;
+      }
+
     }
   }
 }
@@ -184,8 +201,12 @@ body {
 }
 
 .list-buttons {
-
   margin: -0.5em;
+
+  @include for-medium {
+    display: flex;
+    flex-wrap: wrap;
+  }
 
   li {
     margin: 0.5em;
