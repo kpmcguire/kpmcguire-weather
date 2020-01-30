@@ -7,6 +7,23 @@ const dotenv = require('dotenv').config()
 
 app.use(cors())
 
+app.use(function(req, res, next) {
+  var allowedOrigins = [
+    "http://localhost:8080",
+    "https://localhost:8080",
+    "https://kpmcguire-edt-weather.herokuapp.com/",
+    "http://kpmcguire-edt-weather.herokuapp.com/"
+  ];
+  var origin = req.headers.origin;
+  if (allowedOrigins.indexOf(origin) > -1) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", true);
+  return next();
+});
+
 app.use(serveStatic(__dirname + "/dist")) 
 
 app.get("/darksky/", (req, res) => {

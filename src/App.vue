@@ -6,39 +6,34 @@
           img.edt-logo(src="@/assets/images/edt-logo.png")
         .currentTime.flex-1.text-center {{currentTime}}
         .currentDate.flex-1.text-right {{currentDate}}
-      .content-area.flex
-        .location.flex-1.p-4
-          p Weather for: 
-            button.button(@click="getUserLocation") Get My location
-          p or
-          form(@submit="search" v-on:submit.prevent)
-            input(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="query" type="text" v-model="searchQuery")
-            button.button(type="submit") Search
+      .content-area(class="md:flex-row md:flex md:items-stretch")
+        .location.p-4
+          ul.list-buttons 
+            li 
+              button.button(@click="getUserLocation") My location
+            li 
+              button.button(@click="getLocationFromPresets(40.730610, -73.935242)") New York
+            li 
+              button.button(@click="getLocationFromPresets(48.864716, 2.349014)") Paris
+            li 
+              button.button(@click="getLocationFromPresets(30.033333, 31.233334)") Cairo
+            li 
+              button.button(@click="getLocationFromPresets(22.302711, 114.177216)") Hong Kong
+            li 
+              button.button(@click="getLocationFromPresets(-34.603722, -58.381592)") Buenos Aires                    
+            li 
+              form(@submit="search" v-on:submit.prevent)
+                input(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="query" type="text" v-model="searchQuery")
+                button.button(type="submit") Search          
 
-          p or
-
-          button.button(@click="getLocationFromPresets(40.730610, -73.935242)") New York
-          button.button(@click="getLocationFromPresets(48.864716, 2.349014)") Paris
-          button.button(@click="getLocationFromPresets(30.033333, 31.233334)") Cairo
-          button.button(@click="getLocationFromPresets(22.302711, 114.177216)") Hong Kong
-          button.button(@click="getLocationFromPresets(-34.603722, -58.381592)") Buenos Aires                    
-
-        .current.flex-1.p-4.relative
-          .spinner.absolute(v-if="isLoading")
+        .current.text-center.p-4
+          .spinner.mx-auto.my-4(v-if="isLoading")
           div(v-else)
-
             Current(v-if="Object.keys(currentData).length" :key="currentData.id" v-bind:currentLocationFriendly="this.currentLocationFriendly" v-bind:currentTemp="currentData.currentTemp" v-bind:icon="currentData.icon" v-bind:currentLow="currentData.currentLow" v-bind:currentHigh="currentData.currentHigh"
             v-bind:summary="currentData.summary")
 
-            .flex
-              Hourly(v-for="hour in hourlyData" :key="hour.id" v-bind:temp="hour.temp" v-bind:time="hour.time" v-bind:icon="hour.icon")
-
-            .flex
-              Daily(v-for="day in dailyData" :key="day.id" v-bind:time="day.time" v-bind:tempLow="day.tempLow" v-bind:tempHigh="day.tempHigh" v-bind:icon="day.icon")        
-
         .activities.flex-1.p-4
           div(v-if="!isLoading")
-
             div(v-if="Object.keys(activitiesData).length")
               Activities(:key="activitiesData.id" v-bind:kite="activitiesData.kite" v-bind:joggingTemp="activitiesData.joggingTemp" v-bind:joggingPrecip="activitiesData.joggingPrecip" v-bind:skiing="activitiesData.skiing")     
           div
@@ -51,6 +46,17 @@
             label(for="isImperialTrue") Imp.
             input(type="radio" id="isImperialFalse" value="False" v-model="isImperial")
             label(for="isImperialFalse") Met.        
+      .forecast-area.bg-transparent-black.p-6
+        div(v-if="!isLoading")
+          div(v-if="Object.keys(hourlyData).length")
+            h2.text-center.mt-4 Today's forecast
+            .flex.justify-center
+              Hourly(v-for="hour in hourlyData" :key="hour.id" v-bind:temp="hour.temp" v-bind:time="hour.time" v-bind:icon="hour.icon")
+
+          div(v-if="Object.keys(dailyData).length")
+            h2.text-center.mt-4 Forecast for the week
+            .flex.justify-center
+              Daily(v-for="day in dailyData" :key="day.id" v-bind:time="day.time" v-bind:tempLow="day.tempLow" v-bind:tempHigh="day.tempHigh" v-bind:icon="day.icon")  
 
 </template>
 
@@ -131,7 +137,7 @@ export default {
         rawHourlyData.slice(0,6).forEach((hour)=>{
           let hourObj = {}
           
-          hourObj.time = this.convertTime(hour.time)
+          hourObj.time = this.convertTimeShort(hour.time)
           hourObj.temp = `${hour.apparentTemperature}`
           hourlyTemps.push(hourObj.temp)
           hourObj.icon = hour.icon
@@ -181,8 +187,16 @@ export default {
         return response.json()
       })
       .then(data => {
-        this.currentLat = data.results[0].geometry.lat
-        this.currentLong = data.results[0].geometry.lng
+        let dataArr = data.results
+
+        dataArr.sort(function(a, b){
+            if(a.confidence > b.confidence) return -1;
+            if(a.confidence < b.confidence) return 1;
+            return 0;
+        })
+
+        this.currentLat = dataArr[0].geometry.lat
+        this.currentLong = dataArr[0].geometry.lng
 
         this.reverseGeocode(this.currentLat, this.currentLong)
         this.isLoadingGeocoding = false
@@ -272,10 +286,8 @@ export default {
       this.reverseGeocode(this.currentLat, this.currentLong)
       this.showData()
     },
-    convertTime(time) {
+    convertTimeShort(time) {
       let date = new Date(time*1000)
-      let day = date.getDay()
-      let weekdays_array = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
       let hours 
 
@@ -289,14 +301,20 @@ export default {
 
       let am_pm = date.getHours() >= 12 ? 'PM' : 'AM'
 
-      return `${weekdays_array[day]} ${hours} ${am_pm}`
+      return `${hours}${am_pm}`
+    },    
+    convertTime(time) {
+      let date = new Date(time*1000)
+      let day = date.getDay()
+      let weekdays_array = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+      return `${weekdays_array[day]}`
     },
     tempUnits(temp) {
       temp = parseFloat(temp)
       if (this.isFahrenheit === "True") {
-        return `${temp.toFixed(0)}°F`
+        return `${temp.toFixed(0)}<span class="degree">°F</span>`
       } else {
-        return `${((temp - 32)/1.8000).toFixed(0)}°C`
+        return `${((temp - 32)/1.8000).toFixed(0)}<span class="degree">°C</span>`
       }
     },
     distanceUnits(distance) {

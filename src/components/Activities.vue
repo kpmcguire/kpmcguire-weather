@@ -1,8 +1,15 @@
 <template lang="pug">
-  ul
-    li Kite: {{this.$parent.distanceUnits(kite)}} per hour
-    li Jogging: {{this.$parent.tempUnits(joggingTemp)}} {{joggingPrecip}}% Chance of Precipitation
-    li Skiing {{this.$parent.rulerUnits(skiing)}}
+  dl
+    dt.font-bold Kite Flying 
+    dd {{this.$parent.distanceUnits(kite)}} / hr
+    dt.font-bold Jogging
+    dd
+      span(v-html="this.$parent.tempUnits(joggingTemp)")
+      span 
+        | , {{joggingPrecip}}% 
+        abbr.cursor-help(title="Probability of Precipitation") PoP
+    dt.font-bold Skiing
+    dd {{this.$parent.rulerUnits(skiing)}}
 </template>
 
 <script>

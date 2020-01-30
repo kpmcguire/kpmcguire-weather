@@ -1,9 +1,9 @@
 <template lang="pug">
-  div  
-    div {{time}} 
-    div {{this.$parent.tempUnits(temp)}}
-    div.icon 
+  .m-5.hour-wrapper.text-center
+    .icon 
       Icon(v-bind:iconTitle="icon")
+    .temp(v-html="this.$parent.tempUnits(temp)") 
+    .time {{time}} 
 </template>
 
 <script>

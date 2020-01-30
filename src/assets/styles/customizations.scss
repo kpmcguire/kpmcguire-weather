@@ -11,23 +11,25 @@ body {
   color: gray;
   background: silver;
 
-  h1 {
-    font-family: "open_sanslight_italic"
-  }
-
   @include for-small {
     color: red;
   }
 }
 
 .icon {
-  width: 50px;
-
   img {
+    width: 5vw;
     display: block;
-    filter: invert(1)
+    margin: 0 auto;
+    filter: invert(1);
+
+    @include for-small {
+      font-size: 4vw;
+    }        
   }
 }
+
+
 
 .background {
   background: url('assets/images/background.jpg') no-repeat center center fixed;
@@ -37,7 +39,7 @@ body {
 }
 
 .title-bar, .bg-transparent-black {
-  background-color: rgba(black, 0.5)
+  background-color: rgba(black, 0.6)
 }
 
 .edt-logo {
@@ -57,4 +59,152 @@ body {
   &:active {
     background-color: darken($button-color, 50);
   }
+}
+
+.content-area {
+  align-items: flex-start;
+
+  .location, .activities {
+    flex: 1
+  }
+  .current {
+    flex: 2
+  }
+}
+
+.circle-wrapper {
+  max-width: 75%;
+  margin: auto;
+  padding-top: 75%;
+  position: relative;
+
+
+  
+  .circle {
+    
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    .current-location {
+      font-weight: bold;
+      font-size: 2vw;
+
+      @include for-medium {
+        font-size: 5.5vw;
+      }      
+    }
+
+    .current-temp {
+      font-size: 7.75vw;
+      font-weight: bold;
+
+      @include for-medium {
+        font-size: 15vw;
+      }
+    }
+
+    .low-high {
+      font-size: 1.85vw;
+
+      @include for-medium {
+        font-size: 4vw;
+      }          
+    }
+
+    .icon img {
+      width: 75px;
+    }
+  }
+}
+
+.degree {
+  font-size: 75%;
+  position: relative;
+  top: -0.1em;
+  left: 0.1em;
+  font-weight: normal;
+}
+
+.hour-wrapper {
+  .temp {
+    font-size: 2vw;
+
+    @include for-small {
+      font-size: 4vw;
+    }    
+  }
+  .time {
+    font-size: 1.4vw;
+
+    @include for-small {
+      font-size: 3.4vw;
+    }    
+  }
+}
+
+.daily-wrapper {
+  .range {
+    font-size: 1.6vw;
+
+    @include for-small {
+      font-size: 3vw;
+    }    
+  }
+  .time {
+    font-size: 2vw;
+
+    @include for-small {
+      font-size: 3.4vw;
+    }    
+  }
+}
+
+// sticky footer
+
+html, body {
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.background {
+  display: flex;
+  flex-direction: column;
+}
+.content-area {
+  flex: 1 0 auto;
+}
+.forecast-area {
+  flex-shrink: 0;
+}
+
+.list-buttons {
+
+  margin: -0.5em;
+
+  li {
+    margin: 0.5em;
+  }
+}
+
+dl {
+  display: flex;
+  flex-flow: row wrap;
+
+  dt {
+    flex-basis: 40%;
+    margin-bottom: 0.5em;
+  }
+  dd {
+    flex-basis: 50%;
+  }
+}
+
+.cursor-help {
+  cursor: help
 }
