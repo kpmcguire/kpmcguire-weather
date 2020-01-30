@@ -25,8 +25,8 @@
               form(@submit="search" v-on:submit.prevent)
                 label.block(class="md:mt-4 mb-1" for="query") Search (address or postal code)
                 .flex
-                  input(class="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="query" type="text" v-model="searchQuery")
-                  button.button-search(type="submit") Search          
+                  input(class="shadow appearance-none border rounded-l w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="query" type="text" required v-model="searchQuery")
+                  button.button-search(class="focus:outline-none focus:shadow-outline" type="submit") Search          
 
         .current.text-center.p-4
           .spinner.mx-auto.my-4(v-if="isLoading")
@@ -38,16 +38,6 @@
           div(v-if="!isLoading")
             div(v-if="Object.keys(activitiesData).length")
               Activities(:key="activitiesData.id" v-bind:kite="activitiesData.kite" v-bind:joggingTemp="activitiesData.joggingTemp" v-bind:joggingPrecip="activitiesData.joggingPrecip" v-bind:skiing="activitiesData.skiing")     
-          div
-            input(type="radio" id="isFahrenheitTrue" value="True" v-model="isFahrenheit")
-            label(for="isFahrenheitTrue") ℉
-            input(type="radio" id="isFahrenheitFalse" value="False" v-model="isFahrenheit")
-            label(for="isFahrenheitFalse") ℃
-          div
-            input(type="radio" id="isImperialTrue" value="True" v-model="isImperial")
-            label(for="isImperialTrue") Imp.
-            input(type="radio" id="isImperialFalse" value="False" v-model="isImperial")
-            label(for="isImperialFalse") Met.        
 
       .forecast-area.bg-transparent-black.p-6
         div(v-if="!isLoading")
@@ -60,13 +50,25 @@
             h2.text-center.mt-4 Forecast for the week
             .flex.justify-center
               Daily(v-for="day in dailyData" :key="day.id" v-bind:time="day.time" v-bind:tempLow="day.tempLow" v-bind:tempHigh="day.tempHigh" v-bind:icon="day.icon")  
+          div.radio-labels-checked
+            input(type="radio" id="isImperialFalse" value="False" v-model="isImperial")
+            label(for="isImperialFalse") metric     
+            span / 
+            input(type="radio" id="isImperialTrue" value="True" v-model="isImperial")
+            label(for="isImperialTrue") imperial             
+          div.radio-labels-checked
+            input(type="radio" id="isFahrenheitFalse" value="False" v-model="isFahrenheit")
+            label(for="isFahrenheitFalse") C            
+            span /
+            input(type="radio" id="isFahrenheitTrue" value="True" v-model="isFahrenheit")
+            label(for="isFahrenheitTrue") F               
 
 </template>
 
 <script>
 
-// let apiUrl = 'http://localhost:3001'
-let apiUrl = ''
+let apiUrl = 'http://localhost:3001'
+// let apiUrl = ''
 
 import Activities from './components/Activities'
 import Hourly from './components/Hourly'
@@ -166,7 +168,7 @@ export default {
 
         this.activitiesData.kite = data.currently.windSpeed
         this.activitiesData.joggingTemp = data.currently.apparentTemperature
-        this.activitiesData.joggingPrecip = data.currently.precipProbability*100
+        this.activitiesData.joggingPrecip = (data.currently.precipProbability*100).toFixed(0)
         this.activitiesData.skiing = data.currently.precipAccumulation ? data.currently.precipAccumulation : 0
 
         this.currentData.currentLocationFriendly = this.currentLocationFriendly
@@ -266,24 +268,6 @@ export default {
       let showError = () =>{
         this.getLocationFromPresets(40.730610, -73.935242) 
       }
-        
-
-        // switch(error.code) {
-        //   case error.PERMISSION_DENIED:
-        //     alert("User denied the request for Geolocation.")
-        //     break;
-        //   case error.POSITION_UNAVAILABLE:
-        //     alert("Location information is unavailable.")
-        //     break;
-        //   case error.TIMEOUT:
-        //     alert("The request to get user location timed out.")
-        //     break;
-        //   case error.UNKNOWN_ERROR:
-        //     alert("An unknown error occurred.")
-        //     break;
-        // }
-        
-
       navigator.geolocation.getCurrentPosition(showPosition, showError)
         
     },
@@ -327,18 +311,18 @@ export default {
     distanceUnits(distance) {
       distance = parseFloat(distance)
       if (this.isImperial === "True") {
-        return `${distance.toFixed(0)} Miles`
+        return `${distance.toFixed(0)} m`
       } else {
-        return `${(distance * 1.60934).toFixed(0) } Kilometers`
+        return `${(distance * 1.60934).toFixed(0) } km`
       }
     },
     rulerUnits(distance) {
       distance = parseFloat(distance)
 
       if (this.isImperial === "True") {
-        return `${distance.toFixed(0)} Inches`
+        return `${distance.toFixed(0)} in`
       } else {
-        return `${(distance * 2.54).toFixed(0) } Centimeters`
+        return `${(distance * 2.54).toFixed(0) } cm`
       }
     }
   },

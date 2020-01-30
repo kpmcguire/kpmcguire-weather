@@ -103,6 +103,8 @@ body {
     .current-location {
       font-weight: bold;
       font-size: 2vw;
+      margin: 0 7vw 2vw;
+      line-height: 1.4;
 
       @include for-medium {
         font-size: 5.5vw;
@@ -114,7 +116,7 @@ body {
       font-weight: bold;
 
       @include for-medium {
-        font-size: 13vw;
+        font-size: 12vw;
       }
     }
 
@@ -228,4 +230,21 @@ dl {
 
 .cursor-help {
   cursor: help
+}
+
+.radio-labels-checked {
+  font-size: 1.5em;
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  label {
+    opacity: 0.5;
+    color: white;
+    cursor: pointer;
+  }
+  input:checked + label {
+    opacity: 1;
+  }
 }
