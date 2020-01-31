@@ -66,9 +66,12 @@
 </template>
 
 <script>
-
-let apiUrl = 'http://localhost:3001'
-// let apiUrl = ''
+let apiUrl
+if (process.env.NODE_ENV === 'dev') {
+  apiUrl = 'http://localhost:3001'
+} else {
+  apiUrl = ''
+}
 
 import Activities from './components/Activities'
 import Hourly from './components/Hourly'

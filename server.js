@@ -49,6 +49,10 @@ app.use("/reverse_geocode/", (req, res) => {
 })
 
 var port = process.env.PORT || 5000
-var port = 3001
+
+if (process.env.NODE_ENV === 'dev') {
+  port = 3001;
+}
+
 app.listen(port) 
 console.log('server started ' + port)
