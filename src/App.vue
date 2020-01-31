@@ -272,18 +272,20 @@ export default {
 
     },
     getUserLocation() {
+      this.selectedCity = 'user'  
         
       let showPosition = (position) =>{
+        this.selectedCity = 'user'
         this.currentLat = position.coords.latitude
         this.currentLong = position.coords.longitude
         this.reverseGeocode(this.currentLat, this.currentLong)
       }
 
       let showError = () =>{
-        this.getLocationFromPresets(40.730610, -73.935242) 
+        this.getLocationFromPresets(40.730610, -73.935242, 'nyc') 
       }
       navigator.geolocation.getCurrentPosition(showPosition, showError)
-      this.selectedCity = 'user'
+      
     },
     getLocationFromPresets(lat, long, selected) {
       this.currentLat = lat
