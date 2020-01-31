@@ -109,13 +109,13 @@ body {
     flex: 1;
   }
   .current {
-    flex: 2;
+    flex: 1.5;
 
     > div:not(.spinner) {
-      @include fluid-units($unit: 'width', $min_size: 600px, $max_size: 750px);
+      @include fluid-units($unit: 'width', $min_size: 225px, $max_size: 550px);
       margin: 0 auto;
 
-      @include for-small {
+      @include for-medium {
         width: 75%;
       }
     }
@@ -123,9 +123,9 @@ body {
 }
 
 .circle-wrapper {
-  max-width: 75%;
+  max-width: 100%;
   margin: auto;
-  padding-top: 75%;
+  padding-top: 100%;
   position: relative;
  
   .circle {

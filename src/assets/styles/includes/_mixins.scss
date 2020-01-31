@@ -18,7 +18,7 @@
   @return $value / ($value * 0 + 1);
 }
 
-@mixin fluid-units($unit, $min-size, $max-size, $min-vw: 600px, $max-vw: 1200px) {
+@mixin fluid-units($unit, $min-size, $max-size, $min-vw: 850px, $max-vw: 1200px) {
   
   $u1: unit($min-vw);
   $u2: unit($max-vw);
