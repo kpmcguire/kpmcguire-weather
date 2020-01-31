@@ -1,5 +1,5 @@
 <template lang="pug">
-  .m-2.hour-wrapper.text-center(md:m-4)
+  .m-2.hour-wrapper.text-center(class="md:m-4")
     .icon 
       Icon(v-bind:iconTitle="icon")
     .temp(v-html="this.$parent.tempUnits(temp)") 

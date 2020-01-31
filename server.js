@@ -50,7 +50,7 @@ app.use("/reverse_geocode/", (req, res) => {
 
 var port = process.env.PORT || 5000
 
-if (process.env.NODE_ENV === 'dev') {
+if (process.env.NODE_ENV === "development") {
   port = 3001;
 }
 

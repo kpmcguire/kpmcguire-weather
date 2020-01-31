@@ -1,26 +1,27 @@
 <template lang="pug">
   #app
     .background.text-white
-      .title-bar.pt-2.pb-2.pr-4.flex.items-center.content-between(class="md:text-xl")
+      .title-bar.pt-2.pb-2.pr-4.flex.items-center.content-between
         .flex-1
           img.edt-logo(src="@/assets/images/edt-logo.png")
         .flex-1.text-right(class="md:text-center") {{currentTime}}
         .flex-1.text-right {{currentDate}}
       .content-area(class="md:flex-row md:flex md:items-stretch")
         .location.p-4
+          h2 Location
           ul.list-buttons 
             li 
-              button.button(@click="getUserLocation") My location
+              button.button(@click="getUserLocation" v-bind:class="{selected:selectedCity == 'user'}") My location
             li 
-              button.button(@click="getLocationFromPresets(40.730610, -73.935242)") New York
+              button.button(@click="getLocationFromPresets(40.730610, -73.935242, 'nyc')" v-bind:class="{selected:selectedCity == 'nyc'}") New York
             li 
-              button.button(@click="getLocationFromPresets(48.864716, 2.349014)") Paris
+              button.button(@click="getLocationFromPresets(48.864716, 2.349014, 'paris')" v-bind:class="{selected:selectedCity == 'paris'}") Paris
             li 
-              button.button(@click="getLocationFromPresets(30.033333, 31.233334)") Cairo
+              button.button(@click="getLocationFromPresets(30.033333, 31.233334, 'cairo')" v-bind:class="{selected:selectedCity == 'cairo'}") Cairo
             li 
-              button.button(@click="getLocationFromPresets(22.302711, 114.177216)") Hong Kong
+              button.button(@click="getLocationFromPresets(22.302711, 114.177216, 'hk')" v-bind:class="{selected:selectedCity == 'hk'}") Hong Kong
             li 
-              button.button(@click="getLocationFromPresets(-34.603722, -58.381592)") Buenos Aires                    
+              button.button(@click="getLocationFromPresets(-34.603722, -58.381592, 'ba')" v-bind:class="{selected:selectedCity == 'ba'}") Buenos Aires                    
             li(class="text-center w-full md:w-auto md:text-left")
               form(@submit="search" v-on:submit.prevent)
                 label.block(class="md:mt-4 mb-1" for="query") Search (address or postal code)
@@ -40,34 +41,41 @@
               Activities(:key="activitiesData.id" v-bind:kite="activitiesData.kite" v-bind:joggingTemp="activitiesData.joggingTemp" v-bind:joggingPrecip="activitiesData.joggingPrecip" v-bind:skiing="activitiesData.skiing")     
 
       .forecast-area.bg-transparent-black.p-6
-        div(v-if="!isLoading")
-          div(v-if="Object.keys(hourlyData).length")
-            h2.text-center.mt-4 Today's forecast
-            .flex.justify-center
-              Hourly(v-for="hour in hourlyData" :key="hour.id" v-bind:temp="hour.temp" v-bind:time="hour.time" v-bind:icon="hour.icon")
 
-          div(v-if="Object.keys(dailyData).length")
-            h2.text-center.mt-4 Forecast for the week
-            .flex.justify-center
-              Daily(v-for="day in dailyData" :key="day.id" v-bind:time="day.time" v-bind:tempLow="day.tempLow" v-bind:tempHigh="day.tempHigh" v-bind:icon="day.icon")  
-          div.radio-labels-checked
-            input(type="radio" id="isImperialFalse" value="False" v-model="isImperial")
-            label(for="isImperialFalse") metric     
-            span / 
-            input(type="radio" id="isImperialTrue" value="True" v-model="isImperial")
-            label(for="isImperialTrue") imperial             
-          div.radio-labels-checked
-            input(type="radio" id="isFahrenheitFalse" value="False" v-model="isFahrenheit")
-            label(for="isFahrenheitFalse") C            
-            span /
-            input(type="radio" id="isFahrenheitTrue" value="True" v-model="isFahrenheit")
-            label(for="isFahrenheitTrue") F               
+        .flex.flex-col(class="md:flex-row")
+          .flex-1
+          .forecast-area-content(v-if="!isLoading")
+            .flex.justify-center.items-center
+              h4.text-center.mr-2 Forecast For:
+              button.toggle-button(@click="toggleForecast" v-bind:class="{selected: forecastShowWeek}") Today
+              button.toggle-button(@click="toggleForecast" v-bind:class="{selected: !forecastShowWeek}") Week
+
+            div(v-if="!isLoading && this.forecastShowWeek")
+              .flex.justify-center
+                Hourly(v-for="hour in hourlyData" :key="hour.id" v-bind:temp="hour.temp" v-bind:time="hour.time" v-bind:icon="hour.icon")
+
+            div(v-if="!isLoading && !this.forecastShowWeek")
+              .flex.justify-center
+                Daily(v-for="day in dailyData" :key="day.id" v-bind:time="day.time" v-bind:tempLow="day.tempLow" v-bind:tempHigh="day.tempHigh" v-bind:icon="day.icon")            
+          .flex-1.flex.flex-col.justify-center.items-center(class="md:justify-end md:items-end")
+            .radio-labels-checked
+              input(type="radio" id="isImperialFalse" value="False" v-model="isImperial")
+              label(for="isImperialFalse") metric     
+              span / 
+              input(type="radio" id="isImperialTrue" value="True" v-model="isImperial")
+              label(for="isImperialTrue") imperial             
+            .radio-labels-checked
+              input(type="radio" id="isFahrenheitFalse" value="False" v-model="isFahrenheit")
+              label(for="isFahrenheitFalse") °C            
+              span /
+              input(type="radio" id="isFahrenheitTrue" value="True" v-model="isFahrenheit")
+              label(for="isFahrenheitTrue") °F               
 
 </template>
 
 <script>
 let apiUrl
-if (process.env.NODE_ENV === 'dev') {
+if (process.env.NODE_ENV === 'development') {
   apiUrl = 'http://localhost:3001'
 } else {
   apiUrl = ''
@@ -99,7 +107,9 @@ export default {
       isLoadingGeocoding: false,
       isLoadingReverseGeocoding: false,
       currentTime: '',
-      currentDate: ''
+      currentDate: '',
+      forecastShowWeek: true,
+      selectedCity: ''
     }
   },
   methods: {
@@ -190,6 +200,7 @@ export default {
     search() {
       this.currentLocationFriendly = ''
       this.geocode(encodeURIComponent(this.searchQuery))
+      this.selectedCity = 'user'
     },
     geocode(query) {
       this.isLoadingGeocoding = true
@@ -272,11 +283,12 @@ export default {
         this.getLocationFromPresets(40.730610, -73.935242) 
       }
       navigator.geolocation.getCurrentPosition(showPosition, showError)
-        
+      this.selectedCity = 'user'
     },
-    getLocationFromPresets(lat, long) {
+    getLocationFromPresets(lat, long, selected) {
       this.currentLat = lat
       this.currentLong = long
+      this.selectedCity = selected
       this.reverseGeocode(this.currentLat, this.currentLong)
       this.showData()
     },
@@ -327,6 +339,9 @@ export default {
       } else {
         return `${(distance * 2.54).toFixed(0) } cm`
       }
+    },
+    toggleForecast() {
+      this.forecastShowWeek = !this.forecastShowWeek
     }
   },
 

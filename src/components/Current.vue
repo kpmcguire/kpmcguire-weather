@@ -1,5 +1,5 @@
 <template lang="pug">
-  .circle-wrapper.rounded-full.bg-transparent-black.text-center(class="md:my-10")
+  .circle-wrapper.rounded-full.bg-transparent-black.text-center(class="xl:my-10")
     .circle.items-center.flex.justify-center.leading-none
       div.w-full
         h1.current-location.mb-6(class="md:mb-8 lg:mb-10") {{currentLocationFriendly}}
@@ -15,7 +15,7 @@
             div(v-html="this.$parent.tempUnits(currentHigh)") 
         .icon
           Icon(v-bind:iconTitle="icon" class="m-auto")
-          .low-high.leading-normal {{summary}}
+          .condition.leading-normal {{summary}}
     
 </template>
 
