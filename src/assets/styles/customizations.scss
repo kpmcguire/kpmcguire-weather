@@ -48,10 +48,11 @@ body {
 }
 
 .edt-logo {
-  max-width: 265px;
+  max-width: 100px;
+  margin-left: 1rem;
 
   @include for-small {
-    max-width: 175px;
+    max-width: 75px;
   }
 }
 

@@ -3,7 +3,7 @@
     .background.text-white
       .title-bar.pt-2.pb-2.pr-4.flex.items-center.content-between
         .flex-1
-          img.edt-logo(src="@/assets/images/edt-logo.png")
+          img.edt-logo(src="@/assets/images/cinco-logo.png")
         .flex-1.text-right(class="md:text-center") {{currentTime}}
         .flex-1.text-right {{currentDate}}
       .content-area(class="md:flex-row md:flex md:items-stretch")
