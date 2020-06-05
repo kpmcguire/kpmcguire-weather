@@ -11,6 +11,7 @@
     "dev": "npm run server | npm run serve"
   },
   "dependencies": {
+    "@babel/core": "^7.10.2",
     "core-js": "^3.4.4",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
