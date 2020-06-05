@@ -74,17 +74,20 @@
 </template>
 
 <script>
-let apiUrl
-if (process.env.NODE_ENV === 'development') {
-  apiUrl = 'http://localhost:3001'
-} else {
-  apiUrl = ''
-}
 
 import Activities from './components/Activities'
 import Hourly from './components/Hourly'
 import Daily from './components/Daily'
 import Current from './components/Current'
+
+let apiUrl
+
+if (process.env.NODE_ENV === 'development') {
+  apiUrl = `http://localhost:${process.env.VUE_APP_SERVER_PORT}`
+} else {
+  apiUrl = ''
+}
+
 export default {
   name: 'app',
   components: {
