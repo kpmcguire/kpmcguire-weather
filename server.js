@@ -47,7 +47,7 @@ app.use("/reverse_geocode/", cors(corsOptions), (req, res) => {
   req.pipe(request(url)).pipe(res)
 })
 
-var port = process.env.VUE_APP_SERVER_PORT || 5000
+var port = process.env.PORT || 5000
 
 // if (process.env.NODE_ENV === "development") {
 //   port = 3001;
